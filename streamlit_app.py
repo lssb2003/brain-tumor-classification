@@ -64,17 +64,17 @@ st.markdown("""
     }
     
     /* Updated image display styling */
-    .stImage {
-        border-radius: 10px;
-        border: 5px solid #3498db;
-        max-height: 300px !important;
+    div[data-testid="stImage"] {
+        width: 350px !important;   /* Container width */
         margin: auto !important;
-        display: block !important;
     }
     
-    .stImage > img {
-        max-height: 300px !important;
+    div[data-testid="stImage"] img {
+        max-width: 350px !important;   /* Image max width */
+        max-height: 250px !important;  /* Image max height */
         object-fit: contain !important;
+        border-radius: 10px !important;
+        border: 5px solid #3498db !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -168,14 +168,14 @@ with col2:
 # Handle prediction
 if uploaded_file is not None:
     try:
-        # Display uploaded image
         image = Image.open(uploaded_file)
         st.image(image, 
                 caption='Uploaded Image', 
-                width=400)  # Fixed width for more compact display
+                use_column_width=False,  # Don't use column width
+                width=350)  # Smaller fixed width
         
-        # Make prediction
         prediction = predict_image(image)
+
         
         # Display result
         st.markdown("### Prediction Result:")
