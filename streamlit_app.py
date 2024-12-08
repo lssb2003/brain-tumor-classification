@@ -5,73 +5,60 @@ from PIL import Image
 import os
 from model import load_model
 
-# Styling to match your original Flask frontend with compact image display
 st.markdown("""
     <style>
-    /* Main background and container */
     .stApp {
         background-color: #2c3e50;
         color: #ecf0f1;
     }
     
-    /* Title styling */
-    h1 {
-        color: #3498db !important;
-        font-size: 2.5em;
-        margin-bottom: 20px;
+    /* Grouped container styling */
+    .stMarkdown, .stUploader, .css-1y4p8pa {
+        padding: 0 !important;
+        margin: 0 !important;
     }
     
-    /* File uploader styling */
-    .stUploadedFileContent {
+    .block-container {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+
+    /* Group elements in sections */
+    .element-container {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Section styling */
+    .section-container {
         background-color: #34495e;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px !important;
     }
     
-    /* Button styling - orange like original */
+    /* Button styling */
     .stButton > button {
         background-color: #f39c12 !important;
         color: white !important;
         border: none !important;
         padding: 10px 20px !important;
         border-radius: 5px !important;
-        font-size: 1.1em !important;
-        transition: background-color 0.3s !important;
     }
     
     .stButton > button:hover {
         background-color: #e67e22 !important;
-        transform: scale(1.05);
     }
     
-    /* Section headers */
-    h2, h3, h4 {
-        color: #3498db !important;
-        margin-bottom: 15px;
-    }
-    
-    /* Prediction result */
-    .prediction-text {
-        color: #3498db;
-        font-size: 1.2em;
-        font-weight: bold;
-    }
-    
-    /* Container styling */
-    .element-container {
-        background-color: #34495e;
-        border-radius: 10px;
-        padding: 20px;
-        margin: 10px 0;
-    }
-    
-    /* Updated image display styling */
+    /* Image styling */
     div[data-testid="stImage"] {
-        width: 350px !important;   /* Container width */
+        width: 350px !important;
         margin: auto !important;
     }
     
     div[data-testid="stImage"] img {
-        max-width: 350px !important;   /* Image max width */
-        max-height: 250px !important;  /* Image max height */
+        max-width: 350px !important;
+        max-height: 250px !important;
         object-fit: contain !important;
         border-radius: 10px !important;
         border: 5px solid #3498db !important;
@@ -79,7 +66,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Model setup
+# Model setup (same as before)
 @st.cache_resource
 def get_model():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -89,7 +76,7 @@ def get_model():
 
 model, device = get_model()
 
-# Transform pipeline
+# Transform pipeline (same as before)
 transform = transforms.Compose([
     transforms.Grayscale(num_output_channels=3),
     transforms.Resize((128, 128)),
@@ -108,78 +95,64 @@ def predict_image(image):
     
     return 'Tumor' if predicted.item() == 1 else 'No Tumor'
 
-# Main app
+# Main app with grouped sections
 st.title("Brain Tumor Classification")
 
-# File uploader
-st.markdown("### Upload Image")
-uploaded_file = st.file_uploader("Choose a brain scan image", type=['png', 'jpg', 'jpeg'])
+# Upload section grouped together
+with st.container():
+    st.markdown('<div class="section-container">', unsafe_allow_html=True)
+    st.markdown("### Upload Image")
+    uploaded_file = st.file_uploader("Choose a brain scan image", type=['png', 'jpg', 'jpeg'])
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# Sample images section
-st.markdown("### Sample Images for Testing")
-col1, col2 = st.columns(2)
+# Sample images section grouped together
+with st.container():
+    st.markdown('<div class="section-container">', unsafe_allow_html=True)
+    st.markdown("### Sample Images for Testing")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### Tumor Samples")
+        for i in range(1, 4):
+            try:
+                with open(f'static/sample_images/tumor_{i}.jpg', 'rb') as f:
+                    st.download_button(
+                        label=f'Sample Tumor Case {i}',
+                        data=f,
+                        file_name=f'tumor_{i}.jpg',
+                        mime='image/jpeg',
+                        key=f'tumor_{i}'
+                    )
+            except FileNotFoundError:
+                pass
+    
+    with col2:
+        st.markdown("#### Non-Tumor Samples")
+        for i in range(1, 4):
+            try:
+                with open(f'static/sample_images/no_tumor_{i}.jpg', 'rb') as f:
+                    st.download_button(
+                        label=f'Sample Normal Case {i}',
+                        data=f,
+                        file_name=f'no_tumor_{i}.jpg',
+                        mime='image/jpeg',
+                        key=f'no_tumor_{i}'
+                    )
+            except FileNotFoundError:
+                pass
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# Sample images paths
-sample_images = {
-    'Tumor Samples': [
-        ('tumor_1.jpg', 'Sample Tumor Case 1'),
-        ('tumor_2.jpg', 'Sample Tumor Case 2'),
-        ('tumor_3.jpg', 'Sample Tumor Case 3')
-    ],
-    'Non-Tumor Samples': [
-        ('no_tumor_1.jpg', 'Sample Normal Case 1'),
-        ('no_tumor_2.jpg', 'Sample Normal Case 2'),
-        ('no_tumor_3.jpg', 'Sample Normal Case 3')
-    ]
-}
-
-# Display tumor samples
-with col1:
-    st.markdown("#### Tumor Samples")
-    for filename, label in sample_images['Tumor Samples']:
-        try:
-            with open(os.path.join('static', 'sample_images', filename), 'rb') as f:
-                st.download_button(
-                    label=label,
-                    data=f,
-                    file_name=filename,
-                    mime='image/jpeg',
-                    key=filename
-                )
-        except FileNotFoundError:
-            pass
-
-# Display non-tumor samples
-with col2:
-    st.markdown("#### Non-Tumor Samples")
-    for filename, label in sample_images['Non-Tumor Samples']:
-        try:
-            with open(os.path.join('static', 'sample_images', filename), 'rb') as f:
-                st.download_button(
-                    label=label,
-                    data=f,
-                    file_name=filename,
-                    mime='image/jpeg',
-                    key=filename
-                )
-        except FileNotFoundError:
-            pass
-
-# Handle prediction
+# Prediction section grouped together
 if uploaded_file is not None:
-    try:
+    with st.container():
+        st.markdown('<div class="section-container">', unsafe_allow_html=True)
         image = Image.open(uploaded_file)
         st.image(image, 
-                caption='Uploaded Image', 
-                use_column_width=False,  # Don't use column width
-                width=350)  # Smaller fixed width
+                caption='Uploaded Image',
+                use_column_width=False,
+                width=350)
         
         prediction = predict_image(image)
-
-        
-        # Display result
         st.markdown("### Prediction Result:")
         st.markdown(f"<h2 style='color: #3498db;'>{prediction}</h2>", unsafe_allow_html=True)
-        
-    except Exception as e:
-        st.error(f"Error processing image: {str(e)}")
+        st.markdown('</div>', unsafe_allow_html=True)
