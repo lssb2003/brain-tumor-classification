@@ -29,13 +29,6 @@ st.markdown("""
         padding: 0 !important;
     }
     
-    /* Section styling */
-    .section-container {
-        background-color: #f39c12;
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 20px !important;
-    }
     
     /* Button styling */
     .stButton > button {
