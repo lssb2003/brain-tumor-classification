@@ -8,7 +8,7 @@ from model import load_model
 st.markdown("""
     <style>
     .stApp {
-        background-color: #f39c12;
+        background-color: #2c3e50;
         color: #ecf0f1;
     }
     
@@ -31,7 +31,7 @@ st.markdown("""
     
     /* Section styling */
     .section-container {
-        background-color: #34495e;
+        background-color: #f39c12;
         border-radius: 10px;
         padding: 20px;
         margin-bottom: 20px !important;
