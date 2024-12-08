@@ -8,7 +8,7 @@ from model import load_model
 st.markdown("""
     <style>
     .stApp {
-        background-color: #2c3e50;
+        background-color: #f39c12;
         color: #ecf0f1;
     }
     
