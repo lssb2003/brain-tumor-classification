@@ -40,14 +40,14 @@ st.markdown("""
     /* Button styling */
     .stButton > button {
         background-color: #f39c12 !important;
-        color: white !important;
+        color: #f39c12 !important;
         border: none !important;
         padding: 10px 20px !important;
         border-radius: 5px !important;
     }
     
     .stButton > button:hover {
-        background-color: #e67e22 !important;
+        background-color: #f39c12 !important;
     }
     
     /* Image styling */
@@ -61,7 +61,7 @@ st.markdown("""
         max-height: 250px !important;
         object-fit: contain !important;
         border-radius: 10px !important;
-        border: 5px solid #3498db !important;
+        border: 5px solid #f39c12 !important;
     }
     </style>
 """, unsafe_allow_html=True)
