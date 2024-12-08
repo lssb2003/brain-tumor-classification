@@ -5,21 +5,76 @@ from PIL import Image
 import os
 from model import load_model
 
-# Basic styling to match dark theme
+# Styling to match your original Flask frontend with compact image display
 st.markdown("""
     <style>
+    /* Main background and container */
     .stApp {
-        background-color: #1c1c1c;
+        background-color: #2c3e50;
         color: #ecf0f1;
     }
     
+    /* Title styling */
+    h1 {
+        color: #3498db !important;
+        font-size: 2.5em;
+        margin-bottom: 20px;
+    }
+    
+    /* File uploader styling */
+    .stUploadedFileContent {
+        background-color: #34495e;
+    }
+    
+    /* Button styling - orange like original */
     .stButton > button {
-        background-color: #f39c12;
-        color: white;
+        background-color: #f39c12 !important;
+        color: white !important;
+        border: none !important;
+        padding: 10px 20px !important;
+        border-radius: 5px !important;
+        font-size: 1.1em !important;
+        transition: background-color 0.3s !important;
     }
     
     .stButton > button:hover {
-        background-color: #e67e22;
+        background-color: #e67e22 !important;
+        transform: scale(1.05);
+    }
+    
+    /* Section headers */
+    h2, h3, h4 {
+        color: #3498db !important;
+        margin-bottom: 15px;
+    }
+    
+    /* Prediction result */
+    .prediction-text {
+        color: #3498db;
+        font-size: 1.2em;
+        font-weight: bold;
+    }
+    
+    /* Container styling */
+    .element-container {
+        background-color: #34495e;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 10px 0;
+    }
+    
+    /* Updated image display styling */
+    .stImage {
+        border-radius: 10px;
+        border: 5px solid #3498db;
+        max-height: 300px !important;
+        margin: auto !important;
+        display: block !important;
+    }
+    
+    .stImage > img {
+        max-height: 300px !important;
+        object-fit: contain !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -57,10 +112,11 @@ def predict_image(image):
 st.title("Brain Tumor Classification")
 
 # File uploader
-uploaded_file = st.file_uploader("Upload a brain scan image", type=['png', 'jpg', 'jpeg'])
+st.markdown("### Upload Image")
+uploaded_file = st.file_uploader("Choose a brain scan image", type=['png', 'jpg', 'jpeg'])
 
 # Sample images section
-st.subheader("Sample Images for Testing")
+st.markdown("### Sample Images for Testing")
 col1, col2 = st.columns(2)
 
 # Sample images paths
@@ -91,7 +147,7 @@ with col1:
                     key=filename
                 )
         except FileNotFoundError:
-            st.warning(f"Sample {filename} not found")
+            pass
 
 # Display non-tumor samples
 with col2:
@@ -107,14 +163,16 @@ with col2:
                     key=filename
                 )
         except FileNotFoundError:
-            st.warning(f"Sample {filename} not found")
+            pass
 
 # Handle prediction
 if uploaded_file is not None:
     try:
         # Display uploaded image
         image = Image.open(uploaded_file)
-        st.image(image, caption='Uploaded Image', use_column_width=True)
+        st.image(image, 
+                caption='Uploaded Image', 
+                width=400)  # Fixed width for more compact display
         
         # Make prediction
         prediction = predict_image(image)
